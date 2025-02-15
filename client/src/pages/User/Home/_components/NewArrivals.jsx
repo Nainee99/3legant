@@ -35,7 +35,7 @@ export function NewArrivals() {
         {/* Grid on larger screens */}
         <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {newArrivals.map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <ProductCard key={product._id} {...product} />
           ))}
         </div>
 
@@ -52,7 +52,7 @@ export function MobileNewArrivals({ products }) {
       <Carousel>
         <CarouselContent>
           {products.map((product) => (
-            <CarouselItem key={product.id}>
+            <CarouselItem key={product._id}>
               <div className="flex justify-center">
                 <ProductCard {...product} />
               </div>

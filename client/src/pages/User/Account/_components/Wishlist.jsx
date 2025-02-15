@@ -1,40 +1,21 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import EmptyState from "./EmptyState";
-
-const wishlistItems = [
-  {
-    id: 1,
-    name: "Tray Table",
-    price: 19.19,
-    color: "Black",
-    image: "/placeholder.svg?height=80&width=80",
-  },
-  {
-    id: 2,
-    name: "Sofa",
-    price: 345.0,
-    color: "Beige",
-    image: "/placeholder.svg?height=80&width=80",
-  },
-  {
-    id: 3,
-    name: "Bamboo basket",
-    price: 8.8,
-    color: "Beige",
-    image: "/placeholder.svg?height=80&width=80",
-  },
-  {
-    id: 4,
-    name: "Pillow",
-    price: 8.8,
-    color: "Beige",
-    image: "/placeholder.svg?height=80&width=80",
-  },
-];
+import useWishlistStore from "@/lib/store/useWishlistStore";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export default function Wishlist() {
-  if (wishlistItems.length === 0) {
+  const { wishlist, fetchWishlist, removeFromWishlist } = useWishlistStore();
+  const { token } = useAuthStore();
+
+  useEffect(() => {
+    if (token) {
+      fetchWishlist(token);
+    }
+  }, [token, fetchWishlist]);
+
+  if (wishlist.length === 0) {
     return (
       <EmptyState
         type="wishlist"
@@ -52,27 +33,38 @@ export default function Wishlist() {
           <div className="col-span-3">Price</div>
           <div className="col-span-3">Action</div>
         </div>
-        {wishlistItems.map((item) => (
+        {wishlist.map((item) => (
           <div
-            key={item.id}
+            key={item._id}
             className="grid grid-cols-12 gap-4 p-4 items-center"
           >
             <div className="col-span-6 flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => removeFromWishlist(item._id, token)}
+              >
                 <X className="h-4 w-4" />
               </Button>
-              <img
-                src={item.image || "/placeholder.svg"}
+              <img //
+                src={
+                  item.images && Array.isArray(item.images)
+                    ? item.images[0]
+                    : "/placeholder.svg"
+                }
                 alt={item.name}
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
                 <h3 className="font-medium">{item.name}</h3>
-                <p className="text-sm text-gray-500">Color: {item.color}</p>
+                <p className="text-sm text-gray-500">
+                  Color: {item.color || "N/A"}
+                </p>
               </div>
             </div>
             <div className="col-span-3">
-              <p className="font-medium">${item.price.toFixed(2)}</p>
+              <p className="font-medium">${item.price}</p>
             </div>
             <div className="col-span-3">
               <Button>Add to cart</Button>

@@ -4,6 +4,7 @@ import cors from "cors"; // CORS middleware
 import helmet from "helmet"; // Helmet middleware for security
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config(); // Load environment variables
@@ -28,6 +29,7 @@ app.use(express.json()); // Parse incoming JSON requests
 // Use routes
 app.use("/api/auth", authRoutes); // Mount the auth routes on the "/api/auth" path
 app.use("/api/products", productRoutes); // Mount the product routes on the "/api/products" path
+app.use("/api/wishlist", wishlistRoutes); // Mount the wishlist routes on the "/api/wishlist" path
 
 // Global Error Handling Middleware
 app.use(errorHandler); // This should be last to catch any unhandled errors

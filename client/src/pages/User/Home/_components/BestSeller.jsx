@@ -33,7 +33,7 @@ export function BestSeller() {
         {/* Grid on larger screens */}
         <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {bestSellers.map((product) => (
-            <div key={product.id} className="flex justify-center">
+            <div key={product._id} className="flex justify-center">
               <ProductCard {...product} />
             </div>
           ))}
@@ -52,7 +52,7 @@ export function MobileBestSeller({ products }) {
       <Carousel>
         <CarouselContent>
           {products.map((product) => (
-            <CarouselItem key={product.id}>
+            <CarouselItem key={product._id}>
               <div className="flex justify-center">
                 <ProductCard {...product} />
               </div>

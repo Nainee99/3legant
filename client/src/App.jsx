@@ -10,6 +10,7 @@ import SignInForm from "./pages/Auth/SignInPage";
 import SignUpForm from "./pages/Auth/SignUpPage";
 import Dashboard from "./pages/Admin/Dashboard";
 import Shop from "./pages/User/shop";
+import Account from "./pages/User/Account";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<SignInForm />} />
         <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/profile" element={<Account />} />
         <Route
           path="/shop"
           element={
@@ -26,6 +28,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/admin/dashboard"
           element={

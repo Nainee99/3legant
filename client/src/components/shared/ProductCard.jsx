@@ -1,15 +1,39 @@
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useWishlistStore from "@/lib/store/useWishlistStore";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
-export function ProductCard({ name, price, images = [], ratings, badge }) {
+export function ProductCard({ _id, name, price, images = [], ratings, badge }) {
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
+  const { token } = useAuthStore();
   const [isFavorite, setIsFavorite] = useState(false);
   const imageUrl = images.length > 0 ? images[0] : "/placeholder.svg";
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setIsFavorite(storedWishlist.some((item) => item._id === _id));
+  }, [_id, wishlist]); // Depend only on `_id` and `wishlist`
+
+  const handleWishlistToggle = async () => {
+    if (!token) {
+      alert("Please login to manage your wishlist.");
+      return;
+    }
+
+    if (isFavorite) {
+      await removeFromWishlist(_id, token);
+    } else {
+      await addToWishlist(_id, token);
+    }
+    setIsFavorite(!isFavorite);
+  };
 
   return (
     <div className="group relative w-[260px]">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-white">
         {badge && (
-          <Badge className="absolute left-2 top-2  bg-transparent text-black">
+          <Badge className="absolute left-2 top-2 bg-transparent text-black">
             {badge}
           </Badge>
         )}
@@ -17,7 +41,7 @@ export function ProductCard({ name, price, images = [], ratings, badge }) {
           className={`absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
             isFavorite ? "bg-black" : "bg-transparent hover:bg-black/20"
           } focus:outline-none`}
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={handleWishlistToggle}
         >
           <svg
             className={`h-4 w-4 transition-all duration-200 ${
