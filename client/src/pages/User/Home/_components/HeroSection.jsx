@@ -5,7 +5,7 @@ const HeroSection = () => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleShopNow = () => {
-    navigate("/products"); // Navigate to the products route
+    navigate("/shop"); // Navigate to the products route
   };
 
   return (

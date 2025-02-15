@@ -3,43 +3,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector
-import { setUser, setError, setLoading } from "@/lib/store/slices/authSlice";
-import axiosInstance from "@/lib/utils/axiosInstance";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch(); // Get dispatch function
-  const { loading, error } = useSelector((state) => state.auth); // Get loading and error from Redux
+  const { signin, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-
-    try {
-      const response = await axiosInstance.post("/auth/signin", {
-        email,
-        password,
-      });
-
-      const { user, token } = response.data.data;
-      dispatch(setUser({ user, token }));
-
-      // Redirect based on role
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-    } catch (err) {
-      console.log(err);
-      dispatch(setError(err.response?.data?.error || "Login failed"));
-    } finally {
-      dispatch(setLoading(false));
-    }
+    await signin({ email, password }, navigate);
   };
 
   return (
@@ -104,9 +79,9 @@ export default function SignInForm() {
                 <Button
                   type="submit"
                   className="flex w-full justify-center rounded-lg bg-black px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-gray-900"
-                  disabled={loading}
+                  disabled={isLoading}
                 >
-                  {loading ? "Signing in..." : "Sign in"}
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>
             </form>

@@ -1,7 +1,7 @@
-// NewArrivals.js
 import { ProductCard } from "../../../../components/shared/ProductCard";
-import product1 from "@/assets/products/product1.png";
-import product2 from "@/assets/products/product2.png";
+import { useEffect, useState } from "react";
+import useProductStore from "@/lib/store/useProductStore";
+
 import {
   Carousel,
   CarouselContent,
@@ -10,38 +10,21 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const products = [
-  {
-    name: "Skullcandy - Crusher anc 2 wireless headphones",
-    price: 299.99,
-    image: product1,
-    rating: 5,
-    badge: "NEW",
-  },
-  {
-    name: "Beats Studio Pro",
-    price: 349.99,
-    image: product2,
-    rating: 5,
-    badge: "NEW",
-  },
-  {
-    name: "Sony - WH-CH720N Wireless Noise Canceling",
-    price: 149.99,
-    image: product1,
-    rating: 5,
-    badge: "NEW",
-  },
-  {
-    name: "Skullcandy - Rail True Wireless Earbuds",
-    price: 79.99,
-    image: product2,
-    rating: 5,
-    badge: "NEW",
-  },
-];
-
 export function NewArrivals() {
+  const { fetchProducts, products } = useProductStore();
+  const [newArrivals, setNewArrivals] = useState([]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    // Show only the first 4 new products
+    if (products.length > 0) {
+      setNewArrivals(products.slice(0, 4));
+    }
+  }, [products]);
+
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
@@ -51,25 +34,25 @@ export function NewArrivals() {
 
         {/* Grid on larger screens */}
         <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
-            <ProductCard key={index} {...product} />
+          {newArrivals.map((product) => (
+            <ProductCard key={product.id} {...product} />
           ))}
         </div>
 
         {/* Mobile carousel */}
-        <MobileNewArrivals />
+        <MobileNewArrivals products={newArrivals} />
       </div>
     </section>
   );
 }
 
-export function MobileNewArrivals() {
+export function MobileNewArrivals({ products }) {
   return (
     <div className="block lg:hidden mt-12 relative">
       <Carousel>
         <CarouselContent>
-          {products.map((product, index) => (
-            <CarouselItem key={index}>
+          {products.map((product) => (
+            <CarouselItem key={product.id}>
               <div className="flex justify-center">
                 <ProductCard {...product} />
               </div>

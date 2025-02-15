@@ -1,9 +1,29 @@
-import { useState } from "react";
-import { User, ShoppingBag, ChevronDown, X, TicketPercent } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { ShoppingBag, ChevronDown, X, TicketPercent } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Avatar } from "../ui/avatar";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const [showBanner, setShowBanner] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const user = useAuthStore((state) => state.user); // Get user from Zustand
+
+  useEffect(() => {
+    useAuthStore.getState().checkAuth();
+  }, []);
 
   return (
     <div className="relative">
@@ -63,17 +83,51 @@ export default function Navbar() {
 
           {/* Utility Icons */}
           <div className="flex items-center space-x-4">
-            <button className="text-black hover:text-gray-700">
-              <User className="h-6 w-6" />
-              <span className="sr-only">Account</span>
-            </button>
-            <button className="text-black hover:text-gray-700 relative">
+            {/* Show Avatar if user is logged in, else show Login button */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8 cursor-pointer ">
+                    <AvatarImage src={user.avatarUrl} alt={user.name} />
+                    <AvatarFallback>
+                      {user?.name?.charAt(0) ?? "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/favorites")}>
+                    Favorites
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => useAuthStore.getState().logout()}
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <button
+                onClick={() => navigate("/signin")}
+                className="text-black hover:text-gray-700 border border-black px-3 py-1 rounded-lg"
+              >
+                Login
+              </button>
+            )}
+
+            {/* Cart with Link */}
+            <Link
+              to="/cart"
+              className="text-black hover:text-gray-700 relative"
+            >
               <ShoppingBag className="h-6 w-6" />
               <span className="sr-only">Cart</span>
               <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 2
               </span>
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -125,6 +179,15 @@ export default function Navbar() {
             >
               Contact Us
             </a>
+            {/* Show Login button in mobile menu if user is not logged in */}
+            {!user && (
+              <button
+                onClick={() => navigate("/signin")}
+                className="block w-full text-left py-2 text-black hover:text-gray-700"
+              >
+                Login
+              </button>
+            )}
           </div>
         )}
       </nav>

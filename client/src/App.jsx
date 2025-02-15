@@ -1,19 +1,42 @@
-import React from "react";
-import { Provider } from "react-redux"; // Redux Provider
-import { PersistGate } from "redux-persist/integration/react"; // Import PersistGate
-import AppRouter from "@/lib/routers/index";
-import store, { persistor } from "@/lib/store/index"; // Import persistor
-import "./index.css";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useAuthStore } from "./lib/store/useAuthStore";
+// import PrivateRoute from "./routes/PrivateRoute";
+import PrivateRoute from "./lib/routers/PrivateRoute";
+// import AdminRoute from "./routes/AdminRoute";
+import AdminRoute from "./lib/routers/AdminRoute";
+import HomePage from "./pages/User/Home";
+import SignInForm from "./pages/Auth/SignInPage";
+import SignUpForm from "./pages/Auth/SignUpPage";
+import Dashboard from "./pages/Admin/Dashboard";
+import Shop from "./pages/User/shop";
 
-const App = () => {
+function App() {
   return (
-    <Provider store={store}>
-      {/* Use PersistGate to ensure the store is rehydrated before rendering */}
-      <PersistGate loading={null} persistor={persistor}>
-        <AppRouter />
-      </PersistGate>
-    </Provider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signin" element={<SignInForm />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route
+          path="/shop"
+          element={
+            <PrivateRoute>
+              <Shop />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;

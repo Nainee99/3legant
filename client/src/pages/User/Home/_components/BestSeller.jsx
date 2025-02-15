@@ -1,7 +1,7 @@
-// BestSeller.js
 import { ProductCard } from "../../../../components/shared/ProductCard";
-import product1 from "@/assets/products/product1.png";
-import product2 from "@/assets/products/product2.png";
+import { useEffect, useState } from "react";
+import useProductStore from "@/lib/store/useProductStore";
+
 import {
   Carousel,
   CarouselContent,
@@ -10,66 +10,21 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const products = [
-  {
-    name: "Sony - WH-1000XM5 Wireless Noise Canceling",
-    price: 299.99,
-    image: product1,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "Beats Studio Pro",
-    price: 349.99,
-    image: product2,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "Sony - WH-CH720N Wireless Noise Canceling",
-    price: 149.99,
-    image: product1,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "Skullcandy - Rail True Wireless Earbuds",
-    price: 79.99,
-    image: product2,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "Beats Studio Pro",
-    price: 249.99,
-    image: product1,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "JBL Reflect Flow Pro+ Bluetooth Truly Wireless Sports",
-    price: 179.95,
-    image: product2,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "Bose QuietComfort Headphones",
-    price: 349.0,
-    image: product1,
-    rating: 5,
-    badge: "HOT",
-  },
-  {
-    name: "AKG Y600NC Wireless",
-    price: 349.99,
-    image: product2,
-    rating: 5,
-    badge: "HOT",
-  },
-];
-
 export function BestSeller() {
+  const { fetchProducts, products } = useProductStore();
+  const [bestSellers, setBestSellers] = useState([]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    // Fetch only the first 8 products
+    if (products.length > 0) {
+      setBestSellers(products.slice(0, 8));
+    }
+  }, [products]);
+
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
@@ -77,27 +32,27 @@ export function BestSeller() {
 
         {/* Grid on larger screens */}
         <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
-            <div key={index} className="flex justify-center">
+          {bestSellers.map((product) => (
+            <div key={product.id} className="flex justify-center">
               <ProductCard {...product} />
             </div>
           ))}
         </div>
 
         {/* Mobile carousel */}
-        <MobileBestSeller />
+        <MobileBestSeller products={bestSellers} />
       </div>
     </section>
   );
 }
 
-export function MobileBestSeller() {
+export function MobileBestSeller({ products }) {
   return (
     <div className="block lg:hidden mt-12 relative">
       <Carousel>
         <CarouselContent>
-          {products.map((product, index) => (
-            <CarouselItem key={index}>
+          {products.map((product) => (
+            <CarouselItem key={product.id}>
               <div className="flex justify-center">
                 <ProductCard {...product} />
               </div>

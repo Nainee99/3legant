@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "../components/Navbar";
-import AccountSidebar from "../components/AccountSidebar";
-import Address from "../components/Address";
-import Orders from "../components/Orders";
-import Wishlist from "../components/Wishlist";
-import AccountDetails from "../components/AccountDetails";
+import Navbar from "@/components/shared/NavBar";
+import AccountDetails from "./_components/AccountDetails";
+import Address from "./_components/Address";
+import Orders from "./_components/Orders";
+import Wishlist from "./_components/Wishlist";
+import AccountSidebar from "./_components/AccountSidebar";
+
 
 export default function Account() {
   const [activeTab, setActiveTab] = useState("account");

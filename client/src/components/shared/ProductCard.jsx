@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
-export function ProductCard({ name, price, image, rating, badge }) {
+export function ProductCard({ name, price, images = [], ratings, badge }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const imageUrl = images.length > 0 ? images[0] : "/placeholder.svg";
 
   return (
     <div className="group relative w-[260px]">
@@ -30,7 +31,7 @@ export function ProductCard({ name, price, image, rating, badge }) {
           </svg>
         </button>
         <img
-          src={image || "/placeholder.svg"}
+          src={imageUrl}
           alt={name}
           className="h-full w-full object-cover object-center"
         />
@@ -46,7 +47,7 @@ export function ProductCard({ name, price, image, rating, badge }) {
             <svg
               key={i}
               className={`h-4 w-4 ${
-                i < rating ? "fill-yellow-400" : "fill-gray-200"
+                i < ratings ? "fill-yellow-400" : "fill-gray-200"
               }`}
               viewBox="0 0 24 24"
             >

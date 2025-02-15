@@ -2,59 +2,18 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector
-import axiosInstance from "@/lib/utils/axiosInstance";
-import { setUser, setError, setLoading } from "@/lib/store/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch(); // Get dispatch function
-  const { loading, error } = useSelector((state) => state.auth); // Get loading and error from Redux
-  const navigate = useNavigate();
+  const { signup, isLoading, error } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(setError("")); // Clear previous errors
-    dispatch(setLoading(true)); // Set loading to true while making the API call
-
-    try {
-      // Make API call to backend for signup
-      const response = await axiosInstance.post("/auth/signup", {
-        email,
-        username,
-        password,
-      });
-
-      console.log("response", response.data.data);
-
-      const { user, token } = response.data.data; // Extract user and token from the response
-
-      // Dispatch the success action with the user and token data
-      dispatch(
-        setUser({
-          user,
-          token,
-        })
-      );
-
-      // Navigate based on the user's role
-      if (user.role === "admin") {
-        navigate("/admin/dashboard"); // Redirect to admin dashboard
-      } else {
-        navigate("/"); // Redirect to user home page
-      }
-    } catch (err) {
-      console.log(err); // Log the error to the console
-      // Handle error from API response
-      dispatch(
-        setError(err.response?.data?.error || "An error occurred during signup")
-      );
-    } finally {
-      dispatch(setLoading(false)); // Set loading to false once the request is complete
-    }
+    await signup({ email, username, password });
   };
 
   return (
@@ -140,21 +99,21 @@ export default function SignUpForm() {
                 <Button
                   type="submit"
                   className="flex w-full justify-center rounded-lg bg-black px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-gray-900"
-                  disabled={loading}
+                  disabled={isLoading}
                 >
-                  {loading ? "Signing up..." : "Sign up"}
+                  {isLoading ? "Signing up..." : "Sign up"}
                 </Button>
               </div>
             </form>
 
             <p className="mt-10 text-center text-sm text-gray-500">
               Already have an account?{" "}
-              <a
-                href="#"
+              <Link
+                to="/signin"
                 className="font-semibold text-gray-900 hover:text-gray-700"
               >
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
         </div>
