@@ -1,16 +1,14 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuthStore } from "./lib/store/useAuthStore";
-// import PrivateRoute from "./routes/PrivateRoute";
 import PrivateRoute from "./lib/routers/PrivateRoute";
-// import AdminRoute from "./routes/AdminRoute";
 import AdminRoute from "./lib/routers/AdminRoute";
 import HomePage from "./pages/User/Home";
 import SignInForm from "./pages/Auth/SignInPage";
 import SignUpForm from "./pages/Auth/SignUpPage";
-import Dashboard from "./pages/Admin/Dashboard";
 import Shop from "./pages/User/shop";
 import Account from "./pages/User/Account";
+import AdminPanel from "./pages/Admin/AdminPanel";
 
 function App() {
   return (
@@ -30,10 +28,10 @@ function App() {
         />
 
         <Route
-          path="/admin/dashboard"
+          path="/admin/*"
           element={
             <AdminRoute>
-              <Dashboard />
+              <AdminPanel />
             </AdminRoute>
           }
         />
